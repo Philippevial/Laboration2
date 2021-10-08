@@ -111,7 +111,8 @@ public class Service {
     }
 
     public void saveToFile() {
-        List<String> stringList = getProductList().stream().map(this::getProductFields).toList();
+        List<String> stringList = getProductList().stream()
+                .map(this::getProductFields).toList();
         String homePath = System.getProperty("user.home");
         Path path = Path.of(homePath, "Philippes produkter", "products.csv");
 
