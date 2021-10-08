@@ -18,13 +18,11 @@ public class Service {
     static Scanner scanner = new Scanner(System.in);
     private static final Pattern pattern = Pattern.compile(",");
 
-
     public void loadFromFile() {
         if (Files.exists(getPath())) {
             fileLoader(getPath());
-        }else
+        } else
             fileLoader(getDefaultPath());
-
     }
 
     private void fileLoader(Path path) {
@@ -37,13 +35,19 @@ public class Service {
     }
 
     private Path getDefaultPath() {
-        return Path.of("resources","products.csv");
+        return Path.of("resources", "products.csv");
     }
 
     @NotNull
     private Path getPath() {
         String homePath = System.getProperty("user.home");
-        return Path.of(homePath, "Lagersaldo", "products.csv");
+        Path path = Path.of(homePath, "Philippes produkter", "products.csv");
+        try {
+            Files.createDirectories(path.getParent());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return path;
     }
 
     private static Product createAndSplitProduct(String line) {
@@ -79,7 +83,6 @@ public class Service {
     }
 
     public void createNewProduct() {
-
         Product product = new Product("Tom", 0, 0, "Tom");
         //products.add(new Product("Tom",0,0,"Tom"));
         System.out.println("Ange produktnamn: ");
@@ -101,7 +104,7 @@ public class Service {
         String prod = product.name() + "," + product.price() + "," + product.prodID() + "," + product.category();
 
         try {
-            Files.writeString(getPath(), prod, CREATE,APPEND);
+            Files.writeString(getPath(), prod, CREATE, APPEND);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -110,7 +113,7 @@ public class Service {
     public void saveToFile() {
         List<String> stringList = getProductList().stream().map(this::getProductFields).toList();
         String homePath = System.getProperty("user.home");
-        Path path = Path.of(homePath, "Lagersaldo", "products.csv");
+        Path path = Path.of(homePath, "Philippes produkter", "products.csv");
 
         try {
             Files.write(path, stringList, CREATE);
