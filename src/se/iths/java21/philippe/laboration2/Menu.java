@@ -71,10 +71,7 @@ public class Menu {
             printSearchMenu();
             String input = scanner.nextLine();
             switch (input) {
-                case "1" -> {
-
-                    service.searchForProduct().forEach(System.out::println);
-                }
+                case "1" -> service.searchForProduct().forEach(System.out::println);
                 case "2" -> service.searchForProductByProdId(Integer.parseInt(scanner.nextLine()))
                         .forEach(System.out::println);
                 case "3" -> {
