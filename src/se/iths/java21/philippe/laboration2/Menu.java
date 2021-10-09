@@ -6,18 +6,21 @@ import java.util.Scanner;
 public class Menu {
     static Scanner scanner = new Scanner(System.in);
 
+    //FIXA SPARNINGEN OCH FLYTTA RESTEN AV METODERNA
     public void runLaboration() {
         Service service = new Service();
+        Search search = new Search();
+        Save save = new Save();
         service.loadFromFile();
-        runLoop(service);
+        runLoop(service, search, save);
     }
 
-    private void runLoop(Service service) {
+    private void runLoop(Service service, Search search, Save save) {
         boolean run = true;
         while (run) {
             menuChoices();
             String input = scanner.nextLine();
-            run = executeChoice(service, true, input);
+            run = executeChoice(service, search, save, true, input);
         }
     }
 
@@ -28,11 +31,11 @@ public class Menu {
         System.out.println("0. Avsluta");
     }
 
-    private boolean executeChoice(Service service, boolean run, String input) {
+    private boolean executeChoice(Service service, Search search, Save save, boolean run, String input) {
         switch (input) {
             case "1" -> executeProductChoice(service);
-            case "2" -> executeSearchChoice(service);
-            case "3" -> service.saveToFile();
+            case "2" -> executeSearchChoice(search, service);
+            case "3" -> save.saveToFile(service.getProductList());
             case "0" -> run = false;
             default -> System.out.println("Fel val, prova igen!");
         }
@@ -43,16 +46,22 @@ public class Menu {
         System.out.println("1. Skapa och lägg till ny produkt");
         System.out.println("2. Ändra på produkt");
         System.out.println("3. Radera produkt");
+        System.out.println("5. Tillbaka");
     }
 
     private void executeProductChoice(Service service) {
-        productMenu();
-        String choice = scanner.nextLine();
-        switch (choice) {
-            case "1" -> service.createNewProduct();
-            case "2" -> service.modifyProduct();
-            case "3" -> System.out.println("Raderar");
-            default -> System.out.println("Fel val, prova igen!");
+
+        boolean run = true;
+        while (run) {
+            productMenu();
+            String choice = scanner.nextLine();
+            switch (choice) {
+                case "1" -> service.createNewProduct();
+                case "2" -> service.modifyProduct();
+                case "3" -> service.deleteProductFromList();
+                case "5" -> run = false;
+                default -> System.out.println("Fel val, prova igen!");
+            }
         }
     }
 
@@ -65,21 +74,17 @@ public class Menu {
         System.out.println("0. Tillbaka");
     }
 
-    private void executeSearchChoice(Service service) {
+    private void executeSearchChoice(Search search, Service service) {
         boolean run = true;
         while (run) {
             printSearchMenu();
             String input = scanner.nextLine();
             switch (input) {
-                case "1" -> service.searchForProduct().forEach(System.out::println);
-                case "2" -> service.searchForProductByProdId(Integer.parseInt(scanner.nextLine()))
-                        .forEach(System.out::println);
-                case "3" -> {
-                    input = scanner.nextLine();
-                    service.productsByCategory(input).forEach(System.out::println);
-                }
-                case "4" -> service.productsOver100Kr().forEach(System.out::println);
-                case "5" -> service.productsUnder100Kr().forEach(System.out::println);
+                case "1" -> search.searchForProduct(service.getProductList()).forEach(System.out::println);
+                case "2" -> search.searchForProductByProdId(service.getProductList()).forEach(System.out::println);
+                case "3" -> search.productsByCategory(service.getProductList()).forEach(System.out::println);
+                case "4" -> search.productsOver100Kr(service.getProductList()).forEach(System.out::println);
+                case "5" -> search.productsUnder100Kr(service.getProductList()).forEach(System.out::println);
                 case "0" -> run = false;
                 default -> System.out.println("Fel val, prova igen!");
             }
@@ -90,5 +95,6 @@ public class Menu {
         Arrays.stream(args).forEach(System.out::println);
         Menu meny = new Menu();
         meny.runLaboration();
+
     }
 }

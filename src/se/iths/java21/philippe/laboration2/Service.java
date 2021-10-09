@@ -10,19 +10,16 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.nio.file.StandardOpenOption.APPEND;
-import static java.nio.file.StandardOpenOption.CREATE;
-
 public class Service {
     private List<Product> products;
     static Scanner scanner = new Scanner(System.in);
     private static final Pattern pattern = Pattern.compile(",");
 
     public void loadFromFile() {
-        if (Files.exists(getPath())) {
-            fileLoader(getPath());
+        if (Files.exists(filePath())) {
+            fileLoader(filePath());
         } else
-            fileLoader(getDefaultPath());
+            fileLoader(defaultPath());
     }
 
     private void fileLoader(Path path) {
@@ -34,12 +31,12 @@ public class Service {
         }
     }
 
-    private Path getDefaultPath() {
+    private Path defaultPath() {
         return Path.of("resources", "products.csv");
     }
 
     @NotNull
-    private Path getPath() {
+    Path filePath() {
         String homePath = System.getProperty("user.home");
         Path path = Path.of(homePath, "Philippes produkter", "products.csv");
         try {
@@ -63,7 +60,7 @@ public class Service {
         createNewProduct();
     }
 
-    private void deleteProductFromList() {
+    public void deleteProductFromList() {
         System.out.println("Ange produkt: ");
         String name = scanner.nextLine();
         Product toRemove = products.stream()
@@ -74,87 +71,21 @@ public class Service {
         products.remove(toRemove);
     }
 
-    public List<Product> searchForProduct() {
-        System.out.println("Ange produktnamn: ");
-        String name = scanner.nextLine();
-        return products.stream()
-                .filter(product -> product.name().contains(name))
-                .collect(Collectors.toList());
+    private String inputRead(String input) {
+        System.out.println(input);
+        return scanner.nextLine();
     }
 
     public void createNewProduct() {
         Product product = new Product("Tom", 0, 0, "Tom");
-        //products.add(new Product("Tom",0,0,"Tom"));
-        System.out.println("Ange produktnamn: ");
-        String newProd = scanner.nextLine();
-        product.setName(newProd);
-
-        System.out.println("Ange pris: ");
-        newProd = scanner.nextLine();
-        product.setPrice(Float.parseFloat(newProd));
-
-        System.out.println("Ange produktID: ");
-        newProd = scanner.nextLine();
-        product.setProdID(Integer.parseInt(newProd));
-
-        System.out.println("Ange kategori: ");
-        newProd = scanner.nextLine();
-        product.setCategory(newProd);
-
-        String prod = product.name() + "," + product.price() + "," + product.prodID() + "," + product.category();
-
-        try {
-            Files.writeString(getPath(), prod, CREATE, APPEND);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        product.setName(inputRead("Ange namn: "));
+        product.setPrice(Float.parseFloat(inputRead("Ange pris: ")));
+        product.setProdID(Integer.parseInt(inputRead("Ange produktID: ")));
+        product.setCategory(inputRead("Ange kategori: "));
+        products.add(product);
     }
 
-    public void saveToFile() {
-        List<String> stringList = getProductList().stream()
-                .map(this::getProductFields).toList();
-        String homePath = System.getProperty("user.home");
-        Path path = Path.of(homePath, "Philippes produkter", "products.csv");
-
-        try {
-            Files.write(path, stringList, CREATE);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private String getProductFields(Product product) {
-        return product.name() + "," + product.price() + "," +
-                product.prodID() + "," + product.category();
-    }
-
-    private List<Product> getProductList() {
+    public List<Product> getProductList() {
         return products;
-    }
-
-    public List<Product> searchForProductByProdId(int prodID) {
-        System.out.println("Ange produktnr: ");
-        return products.stream()
-                .filter(product -> product.prodID() == (prodID))
-                .collect(Collectors.toList());
-    }
-
-    public List<Product> productsByCategory(String category) {
-        System.out.println("Ange kategori(Öl, Vin, Sprit): ");
-        return products.stream()
-                .filter(product -> product.category().contains(category))
-                .collect(Collectors.toList());
-    }
-
-    public List<Product> productsUnder100Kr() {
-        return products.stream()
-                .filter(product -> product.price() < 100)
-                .collect(Collectors.toList());
-    }
-
-    public List<Product> productsOver100Kr() {
-        return products.stream()
-                .filter(product -> product.price() > 100)
-                .collect(Collectors.toList());
     }
 }
