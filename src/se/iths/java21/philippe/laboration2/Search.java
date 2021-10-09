@@ -6,8 +6,6 @@ import java.util.stream.Collectors;
 
 public class Search {
     static Scanner scanner = new Scanner(System.in);
-    //Service service = new Service();
-   // List<Product> products = service.getProductList();
 
     public List<Product> searchForProduct(List<Product> products) {
         System.out.println("Ange produktnamn: ");
@@ -18,7 +16,7 @@ public class Search {
     }
 
     public List<Product> searchForProductByProdId(List<Product> products) {
-        System.out.println("Ange produktnr: ");
+        System.out.println("Ange produktnummer: ");
         int prodID = Integer.parseInt(scanner.nextLine());
         return products.stream()
                 .filter(product -> product.prodID() == (prodID))

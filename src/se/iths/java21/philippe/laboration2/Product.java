@@ -3,10 +3,10 @@ package se.iths.java21.philippe.laboration2;
 import java.util.Objects;
 
 final class Product {
-    private  String name;
-    private  float price;
-    private  int prodID;
-    private  String category;
+    private String name;
+    private float price;
+    private int prodID;
+    private String category;
 
     Product(String namn, float price, int prodID, String category) {
         this.name = namn;

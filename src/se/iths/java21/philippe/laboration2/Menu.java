@@ -6,7 +6,6 @@ import java.util.Scanner;
 public class Menu {
     static Scanner scanner = new Scanner(System.in);
 
-    //FIXA SPARNINGEN OCH FLYTTA RESTEN AV METODERNA
     public void runLaboration() {
         Service service = new Service();
         Search search = new Search();
